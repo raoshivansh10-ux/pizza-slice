@@ -5,6 +5,7 @@ import { useBuilder } from '../context/BuilderContext';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import VisualPizzaCanvas from '../components/builder/VisualPizzaCanvas';
+import DeliveryLocationPicker from '../components/checkout/DeliveryLocationPicker';
 import {
   CreditCard,
   MapPin,
@@ -54,12 +55,24 @@ const OrderSummaryPage = () => {
   // If cart has items, use cartItems; otherwise if builder has selections, use builder fallback
   const isDirectBuilder = cartItems.length === 0 && selectedBase && selectedSauce && selectedCheese;
 
-  const [deliveryAddress, setDeliveryAddress] = useState({
-    street: '123 Gourmet Way, Floor 2',
+  // Live Delivery Location State
+  const [deliveryLocation, setDeliveryLocation] = useState({
+    latitude: 19.0760,
+    longitude: 72.8777,
+    formattedAddress: 'Bandra West, Mumbai',
+    houseNumber: '',
+    street: 'Hill Road',
+    locality: 'Bandra West',
     city: 'Mumbai',
-    pincode: '400001',
+    state: 'Maharashtra',
+    postalCode: '400050',
+    pincode: '400050',
     phone: '+91 9876543210',
+    distanceKm: 2.1,
   });
+
+  const [isLocationConfirmed, setIsLocationConfirmed] = useState(false);
+  const [loadingSavedLocation, setLoadingSavedLocation] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -91,9 +104,52 @@ const OrderSummaryPage = () => {
       });
   }, []);
 
-  const handleAddressChange = (field, value) => {
-    setDeliveryAddress((prev) => ({ ...prev, [field]: value }));
-  };
+  // Sync Saved Delivery Location for the logged-in Clerk user (strict user isolation)
+  useEffect(() => {
+    if (!user?.id) {
+      // Clear location state on logout or when unauthenticated
+      setDeliveryLocation({
+        latitude: 19.0760,
+        longitude: 72.8777,
+        formattedAddress: 'Bandra West, Mumbai',
+        houseNumber: '',
+        street: 'Hill Road',
+        locality: 'Bandra West',
+        city: 'Mumbai',
+        state: 'Maharashtra',
+        postalCode: '400050',
+        pincode: '400050',
+        phone: '+91 9876543210',
+        distanceKm: 2.1,
+      });
+      setIsLocationConfirmed(false);
+      return;
+    }
+
+    setLoadingSavedLocation(true);
+    api
+      .get('/user/delivery-location')
+      .then((res) => {
+        if (res.data?.savedLocation) {
+          const saved = res.data.savedLocation;
+          setDeliveryLocation((prev) => ({
+            ...prev,
+            ...saved,
+            pincode: saved.postalCode || saved.pincode || prev.pincode,
+            phone: saved.phone || prev.phone,
+          }));
+          if (saved.isDeliverable && saved.formattedAddress) {
+            setIsLocationConfirmed(true);
+          }
+        }
+      })
+      .catch((err) => {
+        console.warn('Could not fetch user saved delivery location:', err.message);
+      })
+      .finally(() => {
+        setLoadingSavedLocation(false);
+      });
+  }, [user?.id]);
 
   // Authoritative server-side loyalty points redemption quote & token
   const handleApplyLoyaltyPoints = async (pointsToUse) => {
@@ -136,6 +192,12 @@ const OrderSummaryPage = () => {
   // Initiate Razorpay Checkout Flow via POST /api/payment/create-order
   const handleProceedToPayment = async () => {
     setError('');
+
+    if (!isLocationConfirmed) {
+      setError('Please confirm your delivery location on the map before proceeding to payment.');
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -170,7 +232,19 @@ const OrderSummaryPage = () => {
 
       const orderPayload = {
         items: itemsPayload,
-        deliveryAddress,
+        latitude: deliveryLocation.latitude,
+        longitude: deliveryLocation.longitude,
+        deliveryAddress: {
+          formattedAddress: deliveryLocation.formattedAddress,
+          houseNumber: deliveryLocation.houseNumber,
+          street: deliveryLocation.street,
+          locality: deliveryLocation.locality,
+          city: deliveryLocation.city,
+          state: deliveryLocation.state,
+          postalCode: deliveryLocation.postalCode,
+          pincode: deliveryLocation.postalCode,
+          phone: deliveryLocation.phone,
+        },
         redemptionToken: appliedRedemption?.redemptionToken || undefined,
       };
 
@@ -200,7 +274,7 @@ const OrderSummaryPage = () => {
           prefill: {
             name: user?.name || '',
             email: user?.email || '',
-            contact: deliveryAddress.phone,
+            contact: deliveryLocation.phone,
           },
           theme: {
             color: '#F86015',
@@ -233,7 +307,7 @@ const OrderSummaryPage = () => {
           currency: currency || 'INR',
           customerName: user?.name || 'Customer',
           customerEmail: user?.email || 'customer@pizzaslice.app',
-          customerPhone: deliveryAddress.phone,
+          customerPhone: deliveryLocation.phone,
         });
       }
     } catch (err) {
@@ -273,7 +347,19 @@ const OrderSummaryPage = () => {
         razorpay_order_id: paymentData.razorpay_order_id,
         razorpay_payment_id: paymentData.razorpay_payment_id,
         razorpay_signature: paymentData.razorpay_signature,
-        deliveryAddress,
+        latitude: deliveryLocation.latitude,
+        longitude: deliveryLocation.longitude,
+        deliveryAddress: {
+          formattedAddress: deliveryLocation.formattedAddress,
+          houseNumber: deliveryLocation.houseNumber,
+          street: deliveryLocation.street,
+          locality: deliveryLocation.locality,
+          city: deliveryLocation.city,
+          state: deliveryLocation.state,
+          postalCode: deliveryLocation.postalCode,
+          pincode: deliveryLocation.postalCode,
+          phone: deliveryLocation.phone,
+        },
       });
 
       // Clear user cart only upon successful server payment verification
@@ -535,84 +621,61 @@ const OrderSummaryPage = () => {
             </div>
           </div>
 
-          {/* Right Column: Delivery & Checkout Panel */}
-          <div className="card-panel">
+          {/* Right Column: Live Delivery Location & Checkout Panel */}
+          <div className="card-panel checkout-location-panel">
             <div className="panel-header">
-              <MapPin size={22} color="#AA784C" />
-              <h3>Delivery Details</h3>
+              <MapPin size={22} color="#F86015" />
+              <div>
+                <h3>Delivery Location</h3>
+                <p className="panel-subtitle-text">Pinpoint your exact delivery address on the live map</p>
+              </div>
             </div>
 
-            <div className="address-form">
-              <div className="form-group">
-                <label>Street Address</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  value={deliveryAddress.street}
-                  onChange={(e) => handleAddressChange('street', e.target.value)}
-                  placeholder="Street, Building, Flat"
-                  required
-                />
-              </div>
+            <DeliveryLocationPicker
+              user={user}
+              initialAddress={deliveryLocation}
+              isConfirmed={isLocationConfirmed}
+              onConfirmLocation={(confirmedData) => {
+                setDeliveryLocation(confirmedData);
+                setIsLocationConfirmed(true);
+                setError('');
+              }}
+              onResetConfirmation={() => {
+                setIsLocationConfirmed(false);
+              }}
+            />
 
-              <div className="form-row">
-                <div className="form-group">
-                  <label>City</label>
-                  <input
-                    type="text"
-                    className="form-input"
-                    value={deliveryAddress.city}
-                    onChange={(e) => handleAddressChange('city', e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Pincode</label>
-                  <input
-                    type="text"
-                    className="form-input"
-                    value={deliveryAddress.pincode}
-                    onChange={(e) => handleAddressChange('pincode', e.target.value)}
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label>Contact Phone</label>
-                <input
-                  type="tel"
-                  className="form-input"
-                  value={deliveryAddress.phone}
-                  onChange={(e) => handleAddressChange('phone', e.target.value)}
-                  required
-                />
-              </div>
-
-              <div className="security-notice">
-                <ShieldCheck size={18} color="#AA784C" />
-                <span>Secured with Razorpay 256-bit cryptographic verification</span>
-              </div>
-
-              <button
-                type="button"
-                className="btn btn-primary btn-block btn-pay"
-                onClick={handleProceedToPayment}
-                disabled={loading}
-              >
-                {loading ? (
-                  <>
-                    <Loader2 size={18} className="spin-icon" />
-                    <span>Processing Order...</span>
-                  </>
-                ) : (
-                  <>
-                    <CreditCard size={18} />
-                    <span>Pay ₹{finalPayableTotal} with Razorpay</span>
-                  </>
-                )}
-              </button>
+            <div className="security-notice">
+              <ShieldCheck size={18} color="#AA784C" />
+              <span>Secured with Razorpay 256-bit cryptographic verification</span>
             </div>
+
+            <button
+              type="button"
+              className={`btn btn-block btn-pay ${
+                isLocationConfirmed ? 'btn-primary' : 'btn-disabled'
+              }`}
+              onClick={handleProceedToPayment}
+              disabled={loading || !isLocationConfirmed}
+              id="btn-pay-razorpay"
+            >
+              {loading ? (
+                <>
+                  <Loader2 size={18} className="spin-icon" />
+                  <span>Processing Order...</span>
+                </>
+              ) : !isLocationConfirmed ? (
+                <>
+                  <MapPin size={18} />
+                  <span>Confirm Location on Map Above to Pay</span>
+                </>
+              ) : (
+                <>
+                  <CreditCard size={18} />
+                  <span>Pay ₹{finalPayableTotal} with Razorpay</span>
+                </>
+              )}
+            </button>
           </div>
         </div>
 

@@ -17,6 +17,7 @@ import menuItemRoutes from './routes/menuItemRoutes.js';
 import comboOfferRoutes from './routes/comboOfferRoutes.js';
 import cartRoutes from './routes/cartRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
+import userLocationRoutes from './routes/userLocationRoutes.js';
 import { initLowStockCron } from './jobs/lowStockCheck.job.js';
 
 // Load environment variables
@@ -103,6 +104,10 @@ app.use('/api/cart', cartRoutes);
 
 // Dedicated Razorpay Payment Routes
 app.use('/api/payment', paymentRoutes);
+
+// Delivery Location & Restaurant Radius Area Routes
+app.use('/api', userLocationRoutes);
+app.use('/api/delivery', userLocationRoutes);
 
 // Root Route
 app.get('/', (req, res) => {

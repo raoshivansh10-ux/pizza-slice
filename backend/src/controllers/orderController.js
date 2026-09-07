@@ -7,6 +7,7 @@ import PizzaOption from '../models/PizzaOption.js';
 import LoyaltyTransaction from '../models/LoyaltyTransaction.js';
 import { createRazorpayOrder } from '../config/razorpay.js';
 import { verifyRedemptionToken } from './loyaltyController.js';
+import { validateDeliveryLocation } from '../config/delivery.js';
 
 /**
  * @desc    Create a new pizza order and initialize Razorpay payment order
@@ -164,6 +165,23 @@ export const createOrder = async (req, res) => {
       discountAmount = Math.min(calculatedTotal, tokenVerification.discountAmount);
     }
 
+    // Validate Delivery Radius (if coordinates are provided)
+    let customerLat = parseFloat(req.body.latitude || req.body.deliveryAddress?.latitude);
+    let customerLng = parseFloat(req.body.longitude || req.body.deliveryAddress?.longitude);
+    let distanceKm = null;
+
+    if (!isNaN(customerLat) && !isNaN(customerLng)) {
+      const locationCheck = validateDeliveryLocation(customerLat, customerLng);
+      if (!locationCheck.isDeliverable) {
+        return res.status(400).json({
+          error: `Sorry, we currently do not deliver to this location (${locationCheck.distanceKm} km away). Our delivery radius is ${locationCheck.maxRadiusKm} km from our kitchen.`,
+          distanceKm: locationCheck.distanceKm,
+          maxRadiusKm: locationCheck.maxRadiusKm,
+        });
+      }
+      distanceKm = locationCheck.distanceKm;
+    }
+
     const finalPayableTotal = Math.max(0, calculatedTotal - discountAmount);
 
     // Initialize Razorpay Order with amount in paise (1 INR = 100 paise)
@@ -173,15 +191,18 @@ export const createOrder = async (req, res) => {
       receipt: `order_${Date.now()}_${req.user._id.toString().slice(-4)}`,
       notes: {
         userId: req.user._id.toString(),
+        clerkId: req.user.clerkId || '',
         totalItems: processedItems.length,
         pointsRedeemed,
         discountAmount,
+        distanceKm: distanceKm || 0,
       },
     });
 
     // Create pending Order in MongoDB
     const newOrder = new Order({
       user: req.user._id,
+      clerkUserId: req.user.clerkId || req.user.id || null,
       items: processedItems,
       subtotal: calculatedTotal,
       discountAmount,
@@ -191,6 +212,9 @@ export const createOrder = async (req, res) => {
       razorpayOrderId: razorpayOrder.id,
       status: 'Order Received',
       statusHistory: [{ status: 'Order Received', timestamp: new Date() }],
+      latitude: !isNaN(customerLat) ? customerLat : null,
+      longitude: !isNaN(customerLng) ? customerLng : null,
+      deliveryDistanceKm: distanceKm,
       deliveryAddress: req.body.deliveryAddress || {},
     });
 
@@ -286,6 +310,13 @@ export const verifyPayment = async (req, res) => {
     order.razorpayPaymentId = razorpay_payment_id;
     order.razorpaySignature = razorpay_signature;
     order.status = 'Order Received';
+    if (req.body.deliveryAddress) order.deliveryAddress = req.body.deliveryAddress;
+    if (req.body.latitude) order.latitude = parseFloat(req.body.latitude);
+    if (req.body.longitude) order.longitude = parseFloat(req.body.longitude);
+    if (order.latitude && order.longitude) {
+      const locationCheck = validateDeliveryLocation(order.latitude, order.longitude);
+      order.deliveryDistanceKm = locationCheck.distanceKm;
+    }
     order.statusHistory.push({ status: 'Order Received', timestamp: new Date() });
     await order.save();
 

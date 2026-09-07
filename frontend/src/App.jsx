@@ -82,6 +82,14 @@ function AppLayout() {
             }
           />
           <Route
+            path="/checkout"
+            element={
+              <ProtectedRoute>
+                <OrderSummaryPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/order-success"
             element={
               <ProtectedRoute>

@@ -1,2 +1,1 @@
-// Placeholder for custom hooks (useAuth, useCart, useSocket)
-export {};
+export { default as useGoogleMaps } from './useGoogleMaps';

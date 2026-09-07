@@ -9,6 +9,7 @@ import { createRazorpayOrder } from '../config/razorpay.js';
 import { computeItemServerPrice } from './cartController.js';
 import { verifyRedemptionToken } from './loyaltyController.js';
 import { getIO } from '../config/socket.js';
+import { validateDeliveryLocation } from '../config/delivery.js';
 
 /**
  * @desc    Create Razorpay Order from server-calculated user cart
@@ -72,11 +73,28 @@ export const createPaymentOrder = async (req, res) => {
       }
     }
 
+    // 4. Validate Delivery Radius (if coordinates are provided)
+    let customerLat = parseFloat(req.body.latitude || req.body.deliveryAddress?.latitude);
+    let customerLng = parseFloat(req.body.longitude || req.body.deliveryAddress?.longitude);
+    let distanceKm = null;
+
+    if (!isNaN(customerLat) && !isNaN(customerLng)) {
+      const locationCheck = validateDeliveryLocation(customerLat, customerLng);
+      if (!locationCheck.isDeliverable) {
+        return res.status(400).json({
+          error: `Sorry, we currently do not deliver to this location (${locationCheck.distanceKm} km away). Our delivery radius is ${locationCheck.maxRadiusKm} km from our kitchen.`,
+          distanceKm: locationCheck.distanceKm,
+          maxRadiusKm: locationCheck.maxRadiusKm,
+        });
+      }
+      distanceKm = locationCheck.distanceKm;
+    }
+
     const deliveryFee = 0; // Free delivery promo
     const tax = 0; // Inclusive
     const finalPayableTotal = Math.max(0, calculatedSubtotal - discountAmount + deliveryFee + tax);
 
-    // 4. Amount in paise (1 INR = 100 paise)
+    // 5. Amount in paise (1 INR = 100 paise)
     const amountInPaise = Math.max(100, Math.round(finalPayableTotal * 100));
     const receiptId = `rcpt_${Date.now()}_${userId.toString().slice(-4)}`;
 
@@ -89,10 +107,11 @@ export const createPaymentOrder = async (req, res) => {
         itemCount: processedItems.length,
         pointsRedeemed,
         discountAmount,
+        distanceKm: distanceKm || 0,
       },
     });
 
-    // 5. Pre-save or update pending order record in MongoDB
+    // 6. Pre-save or update pending order record in MongoDB
     let existingPendingOrder = await Order.findOne({
       user: userId,
       paymentStatus: 'pending',
@@ -114,8 +133,19 @@ export const createPaymentOrder = async (req, res) => {
         razorpayOrderId: razorpayOrder.id,
         status: 'Order Received',
         statusHistory: [{ status: 'Order Received', timestamp: new Date() }],
+        latitude: !isNaN(customerLat) ? customerLat : null,
+        longitude: !isNaN(customerLng) ? customerLng : null,
+        deliveryDistanceKm: distanceKm,
         deliveryAddress: req.body.deliveryAddress || {},
       });
+      await existingPendingOrder.save();
+    } else {
+      existingPendingOrder.latitude = !isNaN(customerLat) ? customerLat : existingPendingOrder.latitude;
+      existingPendingOrder.longitude = !isNaN(customerLng) ? customerLng : existingPendingOrder.longitude;
+      existingPendingOrder.deliveryDistanceKm = distanceKm || existingPendingOrder.deliveryDistanceKm;
+      if (req.body.deliveryAddress) {
+        existingPendingOrder.deliveryAddress = req.body.deliveryAddress;
+      }
       await existingPendingOrder.save();
     }
 
@@ -252,6 +282,14 @@ export const verifyPayment = async (req, res) => {
     }
     if (deliveryAddress) {
       order.deliveryAddress = deliveryAddress;
+      if (deliveryAddress.latitude) order.latitude = parseFloat(deliveryAddress.latitude);
+      if (deliveryAddress.longitude) order.longitude = parseFloat(deliveryAddress.longitude);
+    }
+    if (req.body.latitude) order.latitude = parseFloat(req.body.latitude);
+    if (req.body.longitude) order.longitude = parseFloat(req.body.longitude);
+    if (order.latitude && order.longitude) {
+      const locationCheck = validateDeliveryLocation(order.latitude, order.longitude);
+      order.deliveryDistanceKm = locationCheck.distanceKm;
     }
     order.statusHistory.push({ status: 'Order Received', timestamp: new Date() });
     await order.save();

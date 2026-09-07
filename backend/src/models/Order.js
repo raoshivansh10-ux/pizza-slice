@@ -160,15 +160,28 @@ const orderSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
-    razorpaySignature: {
-      type: String,
+    latitude: {
+      type: Number,
+      default: null,
+    },
+    longitude: {
+      type: Number,
+      default: null,
+    },
+    deliveryDistanceKm: {
+      type: Number,
       default: null,
     },
     deliveryAddress: {
-      street: { type: String, trim: true },
-      city: { type: String, trim: true },
-      pincode: { type: String, trim: true },
-      phone: { type: String, trim: true },
+      formattedAddress: { type: String, trim: true, default: '' },
+      houseNumber: { type: String, trim: true, default: '' },
+      street: { type: String, trim: true, default: '' },
+      locality: { type: String, trim: true, default: '' },
+      city: { type: String, trim: true, default: '' },
+      state: { type: String, trim: true, default: '' },
+      postalCode: { type: String, trim: true, default: '' },
+      pincode: { type: String, trim: true, default: '' },
+      phone: { type: String, trim: true, default: '' },
     },
   },
   {
