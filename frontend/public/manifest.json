@@ -1,0 +1,31 @@
+{
+  "name": "Pizza Slice - Handcrafted Artisan Pizzas",
+  "short_name": "PizzaSlice",
+  "description": "Order fresh handcrafted artisan pizzas with real-time live order tracking.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#06111e",
+  "theme_color": "#006491",
+  "orientation": "portrait",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/maskable-icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

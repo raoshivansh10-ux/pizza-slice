@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="bgGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#872F20" />
+      <stop offset="100%" stop-color="#3A1910" />
+    </radialGradient>
+    <radialGradient id="crustGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#d97706" />
+      <stop offset="65%" stop-color="#b45309" />
+      <stop offset="100%" stop-color="#78350f" />
+    </radialGradient>
+    <radialGradient id="cheeseGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="60%" stop-color="#fde047" />
+      <stop offset="100%" stop-color="#eab308" />
+    </radialGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <!-- Background App Disc -->
+  <rect width="512" height="512" rx="100" fill="url(#bgGrad)" />
+
+  <!-- Artisan Golden Crust -->
+  <circle cx="256" cy="256" r="195" fill="url(#crustGrad)" filter="url(#shadow)"/>
+
+  <!-- Tomato Sauce Rim -->
+  <circle cx="256" cy="256" r="172" fill="#872F20" />
+
+  <!-- Melted Bubbly Cheese Core -->
+  <circle cx="256" cy="256" r="158" fill="url(#cheeseGrad)" />
+
+  <!-- Pepperoni / Tomato Slices -->
+  <circle cx="210" cy="180" r="28" fill="#b91c1c" stroke="#991b1b" stroke-width="4"/>
+  <circle cx="315" cy="210" r="26" fill="#b91c1c" stroke="#991b1b" stroke-width="4"/>
+  <circle cx="230" cy="310" r="30" fill="#b91c1c" stroke="#991b1b" stroke-width="4"/>
+  <circle cx="330" cy="305" r="24" fill="#b91c1c" stroke="#991b1b" stroke-width="4"/>
+  <circle cx="260" cy="245" r="22" fill="#b91c1c" stroke="#991b1b" stroke-width="3"/>
+
+  <!-- Basil / Spinach Leaves -->
+  <ellipse cx="175" cy="250" rx="18" ry="10" transform="rotate(-30 175 250)" fill="#15803d" stroke="#166534" stroke-width="2"/>
+  <ellipse cx="280" cy="165" rx="16" ry="9" transform="rotate(45 280 165)" fill="#15803d" stroke="#166534" stroke-width="2"/>
+  <ellipse cx="285" cy="355" rx="17" ry="9" transform="rotate(-15 285 355)" fill="#15803d" stroke="#166534" stroke-width="2"/>
+  <ellipse cx="360" cy="255" rx="15" ry="8" transform="rotate(60 360 255)" fill="#15803d" stroke="#166534" stroke-width="2"/>
+
+  <!-- Black Olive Rings -->
+  <circle cx="215" cy="225" r="10" fill="#18181b" stroke="#3f3f46" stroke-width="2"/>
+  <circle cx="215" cy="225" r="4" fill="#fde047" />
+
+  <circle cx="275" cy="290" r="11" fill="#18181b" stroke="#3f3f46" stroke-width="2"/>
+  <circle cx="275" cy="290" r="4.5" fill="#fde047" />
+
+  <circle cx="345" cy="170" r="9" fill="#18181b" stroke="#3f3f46" stroke-width="2"/>
+  <circle cx="345" cy="170" r="3.5" fill="#fde047" />
+</svg>
