@@ -3306,7 +3306,28 @@ input, textarea, select {
 /* Responsive Breakpoints */
 @media (max-width: 900px) {
   .builder-two-column-layout {
-    grid-template-columns: 1fr;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    gap: 16px !important;
+  }
+
+  .builder-left-scroll-column,
+  .builder-right-sticky-column {
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .step-content,
+  .step-pane {
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   .sticky-preview-wrapper {
@@ -3318,8 +3339,13 @@ input, textarea, select {
   }
 
   .steps-tracker {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 6px;
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   .summary-grid {
@@ -3333,6 +3359,24 @@ input, textarea, select {
   .pizza-canvas {
     width: 220px;
     height: 220px;
+    max-width: 100%;
+  }
+
+  .pizza-live-caption {
+    max-width: 100% !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    padding: 0 8px !important;
+  }
+
+  .caption-badge {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    word-break: break-word !important;
+    white-space: normal !important;
+    text-align: center !important;
+    display: inline-block !important;
   }
 }
 
@@ -3340,23 +3384,27 @@ input, textarea, select {
   .builder-page {
     padding: 12px 8px 80px !important;
     width: 100% !important;
+    max-width: 100% !important;
     box-sizing: border-box !important;
-    overflow-x: hidden !important;
   }
 
   .builder-two-column-layout {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
     width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
     box-sizing: border-box !important;
-    overflow: hidden !important;
+    gap: 16px !important;
   }
 
-  .builder-left-scroll-column {
+  .builder-left-scroll-column,
+  .builder-right-sticky-column {
     padding: 0 !important;
     width: 100% !important;
     max-width: 100% !important;
     min-width: 0 !important;
     box-sizing: border-box !important;
-    overflow: hidden !important;
   }
 
   .steps-tracker {
@@ -3471,10 +3519,13 @@ input, textarea, select {
   }
 
   .options-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 8px !important;
     margin-bottom: 16px !important;
     width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
     box-sizing: border-box !important;
   }
 
@@ -5680,6 +5731,9 @@ input, textarea, select {
   font-weight: 700;
   color: var(--text-main);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  max-width: 100%;
+  box-sizing: border-box;
+  word-break: break-word;
 }
 
 .pizza-live-caption .caption-sub {
