@@ -358,10 +358,7 @@ const DashboardPage = () => {
             3. AUTO-ADVANCING PROMO BANNER CAROUSEL
             ========================================================================= */}
         <div className="home-promo-carousel-wrap">
-          <div
-            className="home-promo-slide"
-            style={{ background: PROMO_SLIDES[activeSlide].bgGradient }}
-          >
+          <div className="home-promo-slide">
             <div className="promo-slide-left">
               <div className="promo-slide-tag-row">
                 <span className="promo-badge-tag">
