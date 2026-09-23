@@ -7399,9 +7399,10 @@ html {
    Rebuilt Home / Dashboard Layout Styles (Dominos Palette Theme)
    ========================================================================== */
 
+.home-dashboard-page,
 .home-dashboard {
   min-height: 100vh;
-  padding: 16px 16px calc(24px + var(--sab)) 16px;
+  padding: 16px 16px calc(95px + var(--sab, 0px)) 16px;
 }
 
 .home-dashboard-container {
@@ -7409,7 +7410,7 @@ html {
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 24px;
 }
 
 /* 1. Top Header */
@@ -7417,53 +7418,51 @@ html {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding: 4px 0;
+  gap: 12px;
+  padding: 4px 0 0 0;
 }
 
 .home-header-left {
   display: flex;
-  align-items: center;
-  gap: 14px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
 }
 
-.home-header-logo-icon {
-  width: 46px;
-  height: 46px;
-  border-radius: var(--radius-md);
-  background: linear-gradient(135deg, rgba(227, 24, 55, 0.25) 0%, rgba(0, 100, 145, 0.3) 100%);
-  border: 1px solid var(--border-subtle);
-  display: flex;
+.home-greeting-badge {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .home-greeting-text {
-  display: flex;
-  flex-direction: column;
-}
-
-.home-greeting-title {
-  font-size: 20px;
-  font-weight: 800;
-  color: var(--text-main);
+  font-size: 22px;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: -0.02em;
   line-height: 1.2;
 }
 
-.home-greeting-sub {
-  font-size: 13px;
+.home-location-subtext {
+  font-size: 13.5px;
   color: var(--text-muted);
-  margin-top: 2px;
+  line-height: 1.35;
+  margin: 0;
 }
 
+.home-header-actions,
 .home-header-right {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
-.btn-home-icon {
+.home-icon-btn,
+.btn-home-icon,
+.home-cart-btn,
+.btn-home-cart {
   background: var(--bg-surface-elevated);
   border: 1px solid var(--border-subtle);
   color: var(--text-main);
@@ -7477,22 +7476,23 @@ html {
   transition: var(--transition-fast);
   position: relative;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
 }
 
-.btn-home-icon:hover {
+.home-icon-btn:hover,
+.btn-home-icon:hover,
+.home-cart-btn:hover,
+.btn-home-cart:hover {
   background: rgba(0, 100, 145, 0.25);
   border-color: var(--pizza-warm-beige);
   transform: translateY(-1px);
 }
 
-.btn-home-cart {
-  position: relative;
-}
-
+.home-notif-dot,
 .home-bell-ping {
   position: absolute;
-  top: 10px;
-  right: 11px;
+  top: 9px;
+  right: 10px;
   width: 8px;
   height: 8px;
   background: #E31837;
@@ -8585,16 +8585,116 @@ html {
 
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
+  .home-dashboard-page,
+  .home-dashboard {
+    padding: 12px 12px calc(95px + var(--sab, 0px)) 12px;
+  }
+
+  .home-dashboard-container {
+    gap: 18px;
+  }
+
+  .home-top-header {
+    gap: 8px;
+    margin-bottom: 0;
+  }
+
+  .home-greeting-text {
+    font-size: 17px;
+    line-height: 1.2;
+  }
+
+  .home-location-subtext {
+    font-size: 11.5px;
+    line-height: 1.3;
+  }
+
+  .home-icon-btn,
+  .btn-home-icon,
+  .home-cart-btn,
+  .btn-home-cart {
+    width: 36px !important;
+    height: 36px !important;
+  }
+
+  .home-search-input {
+    padding: 10px 32px 10px 38px !important;
+    font-size: 12.5px !important;
+  }
+
+  .home-filter-btn {
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+  .home-filter-menu {
+    top: 46px;
+    width: 185px;
+    padding: 6px;
+  }
+
+  .filter-option {
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+
   .home-promo-slide {
-    padding: 20px 22px;
-    min-height: 190px;
-    position: relative;
-    overflow: hidden;
+    padding: 14px 14px;
+    min-height: 150px;
+    border-radius: var(--radius-lg);
   }
 
   .promo-slide-left {
     max-width: 100% !important;
+    gap: 5px;
     z-index: 3 !important;
+  }
+
+  .promo-slide-tag-row {
+    gap: 6px;
+  }
+
+  .promo-badge-tag {
+    font-size: 9px !important;
+    padding: 1.5px 6px !important;
+  }
+
+  .promo-pill-label {
+    font-size: 9px !important;
+  }
+
+  .promo-slide-title {
+    font-size: 16px !important;
+    line-height: 1.2 !important;
+    margin: 2px 0 0 0;
+  }
+
+  .promo-slide-subtitle {
+    font-size: 11px !important;
+    line-height: 1.3 !important;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .promo-pricing-row {
+    margin-top: 4px !important;
+    gap: 6px !important;
+    flex-wrap: wrap !important;
+  }
+
+  .promo-current-price {
+    font-size: 15px !important;
+  }
+
+  .promo-orig-price {
+    font-size: 11px !important;
+  }
+
+  .promo-code-chip {
+    font-size: 9.5px !important;
+    padding: 2px 6px !important;
   }
 
   .promo-slide-right {
@@ -8606,11 +8706,11 @@ html {
     width: 100% !important;
     height: 100% !important;
     z-index: 1 !important;
-    opacity: 0.55 !important;
+    opacity: 0.45 !important;
   }
 
   .promo-slide-right::before {
-    background: linear-gradient(180deg, rgba(6, 17, 30, 0.94) 0%, rgba(6, 17, 30, 0.78) 55%, rgba(6, 17, 30, 0.45) 100%) !important;
+    background: linear-gradient(180deg, rgba(6, 17, 30, 0.96) 0%, rgba(6, 17, 30, 0.85) 60%, rgba(6, 17, 30, 0.55) 100%) !important;
   }
 
   .promo-pizza-img {
@@ -8618,25 +8718,137 @@ html {
     height: 100% !important;
   }
 
+  .home-category-chips-bar {
+    gap: 6px;
+    padding: 2px 0 6px 0;
+  }
+
+  .home-category-chip {
+    padding: 6px 12px;
+    font-size: 11.5px;
+    gap: 5px;
+  }
+
+  .section-title-row {
+    margin-bottom: 8px;
+  }
+
+  .section-super-title {
+    font-size: 10px;
+  }
+
+  .section-heading {
+    font-size: 16px;
+  }
+
+  .section-view-all-link {
+    font-size: 11.5px;
+  }
+
+  .popular-picks-slider {
+    gap: 10px;
+    padding: 2px 2px 8px 2px;
+  }
+
+  .popular-product-card {
+    min-width: 155px !important;
+    max-width: 165px !important;
+    padding: 10px !important;
+    gap: 6px !important;
+    border-radius: var(--radius-md) !important;
+  }
+
+  .popular-card-img-wrap {
+    height: 85px !important;
+  }
+
+  .popular-card-img {
+    width: 75px !important;
+    height: 75px !important;
+  }
+
+  .popular-card-title {
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    line-height: 1.25 !important;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .popular-card-desc {
+    font-size: 10px !important;
+    line-height: 1.3 !important;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .popular-price-val {
+    font-size: 14px !important;
+  }
+
+  .popular-strike-val {
+    font-size: 10px !important;
+  }
+
+  .popular-discount-pill {
+    font-size: 8.5px !important;
+    padding: 1px 4px !important;
+  }
+
   .home-builder-hero-card {
     flex-direction: column;
-    padding: 24px;
+    padding: 20px 16px;
     text-align: left;
     align-items: flex-start;
+    gap: 16px;
+  }
+
+  .builder-hero-title {
+    font-size: 18px !important;
+  }
+
+  .builder-hero-desc {
+    font-size: 12px !important;
   }
 
   .builder-hero-right {
     align-self: center;
-    margin-top: 10px;
+    margin-top: 4px;
+  }
+
+  .builder-hero-img {
+    width: 110px !important;
+    height: 110px !important;
+  }
+
+  .builder-glow-disc::before {
+    width: 130px !important;
+    height: 130px !important;
   }
 
   .home-combo-banner-card {
     flex-direction: column;
     align-items: flex-start;
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .combo-banner-title {
+    font-size: 14px !important;
+    padding-right: 60px !important;
   }
 
   .combo-banner-right {
     align-self: center;
+  }
+
+  .combo-banner-img {
+    width: 75px !important;
+    height: 75px !important;
   }
 }
 

@@ -44,7 +44,7 @@ const CATEGORY_CHIPS = [
 const PROMO_SLIDES = [
   {
     id: 1,
-    title: 'Earn 2x Loyalty Points / Artisan Pizzas',
+    title: 'Earn 2x Loyalty Points',
     subtitle: 'Get double VIP points on all handcrafted artisan pizzas',
     discount: '2X POINTS',
     tag: 'VIP REWARD',
@@ -101,6 +101,24 @@ const DashboardPage = () => {
   const [addedItemAnimId, setAddedItemAnimId] = useState(null);
 
   const carouselTimerRef = useRef(null);
+  const filterMenuRef = useRef(null);
+
+  // Close filter dropdown on outside tap / click
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (filterMenuRef.current && !filterMenuRef.current.contains(e.target)) {
+        setShowFilterDropdown(false);
+      }
+    };
+    if (showFilterDropdown) {
+      document.addEventListener('mousedown', handleOutsideClick);
+      document.addEventListener('touchstart', handleOutsideClick);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('touchstart', handleOutsideClick);
+    };
+  }, [showFilterDropdown]);
 
   // 1. Fetch Popular Picks, Combos, and Initial Menu Catalog
   useEffect(() => {
@@ -280,7 +298,7 @@ const DashboardPage = () => {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search artisanal pizzas, garlic breads, sides, drinks..."
+              placeholder="Search pizzas, garlic breads, sides, drinks..."
               className="home-search-input"
             />
             {searchQuery && (
@@ -295,7 +313,7 @@ const DashboardPage = () => {
           </div>
 
           {/* Filter/Sort Dropdown Toggle */}
-          <div className="home-filter-dropdown-wrap">
+          <div className="home-filter-dropdown-wrap" ref={filterMenuRef}>
             <button
               type="button"
               onClick={() => setShowFilterDropdown(!showFilterDropdown)}
