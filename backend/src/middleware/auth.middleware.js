@@ -100,7 +100,7 @@ export const protect = async (req, res, next) => {
           email,
           role: 'user',
           isVerified: true,
-          loyaltyPoints: 50, // Welcome signup bonus!
+          loyaltyPoints: 20, // Welcome signup bonus with 20 initial credits!
         });
       }
     }

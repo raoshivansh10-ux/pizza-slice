@@ -12,6 +12,7 @@ import OrderingSectionModal from './components/ordering/OrderingSectionModal';
 import PwaInstallPrompt from './components/common/PwaInstallPrompt';
 import MobileBottomNav from './components/common/MobileBottomNav';
 import Footer from './components/common/Footer';
+import ScrollToTop from './components/common/ScrollToTop';
 
 // Customer Pages
 import DashboardPage from './pages/DashboardPage';
@@ -40,6 +41,7 @@ function AppLayout() {
 
   return (
     <div className="app-shell">
+      <ScrollToTop />
       {!isAdminRoute && <Navbar />}
 
       {/* Global Slide-Over Cart Drawer & Ordering Modal */}
