@@ -5,7 +5,7 @@ export const CATEGORY_FALLBACKS = {
   pizza: 'https://images.unsplash.com/photo-1604382355076-af4b0eb60143?auto=format&fit=crop&w=600&q=80',
   'garlic-bread': 'https://images.unsplash.com/photo-1549611016-3a70d82b5040?auto=format&fit=crop&w=600&q=80',
   sides: 'https://images.unsplash.com/photo-1630384060421-cb20d0e0649d?auto=format&fit=crop&w=600&q=80',
-  dips: 'https://images.unsplash.com/photo-1541592106381-b31e9677c0e5?auto=format&fit=crop&w=600&q=80',
+  dips: '/images/dips/garlic_aioli_dip.jpg',
   drinks: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=600&q=80',
   desserts: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80',
   combos: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=600&q=80',
@@ -16,8 +16,8 @@ export const seedMenuAndCombos = async (force = false) => {
     const existingCount = await MenuItem.countDocuments({ category: 'pizza' });
     if (!force && existingCount >= 8) {
       const legacySample = await MenuItem.findOne({ image: '/images/pizza-base.png' });
-      const dipsCount = await MenuItem.countDocuments({ category: 'dips' });
-      if (!legacySample && dipsCount > 0) {
+      const herbsSample = await MenuItem.findOne({ image: '/images/dips/herbs_chili_sachets.jpg' });
+      if (!legacySample && herbsSample) {
         return;
       }
     }
@@ -276,7 +276,7 @@ export const seedMenuAndCombos = async (force = false) => {
         name: 'Creamy Garlic Aioli Dip',
         description: 'Rich roasted garlic dip with herbs and olive oil, perfect for pizza crusts and breadsticks.',
         category: 'dips',
-        image: 'https://images.unsplash.com/photo-1576107232684-1279f3908594?auto=format&fit=crop&w=600&q=80',
+        image: '/images/dips/garlic_aioli_dip.jpg',
         basePrice: 40,
         tags: ['vegetarian', 'bestseller'],
         badge: 'bestseller',
@@ -288,7 +288,7 @@ export const seedMenuAndCombos = async (force = false) => {
         name: 'Cheesy Jalapeño Dip',
         description: 'Warm, gooey melted cheddar dip with diced spicy green jalapeños.',
         category: 'dips',
-        image: 'https://images.unsplash.com/photo-1541592106381-b31e9677c0e5?auto=format&fit=crop&w=600&q=80',
+        image: '/images/dips/cheesy_jalapeno_dip.jpg',
         basePrice: 45,
         tags: ['vegetarian', 'spicy', 'popular'],
         badge: 'popular',
@@ -300,7 +300,7 @@ export const seedMenuAndCombos = async (force = false) => {
         name: 'Spicy Peri-Peri Dip',
         description: 'Fiery red chili and herb mayo dip with a bold zesty kick.',
         category: 'dips',
-        image: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=600&q=80',
+        image: '/images/dips/peri_peri_dip.jpg',
         basePrice: 40,
         tags: ['vegetarian', 'spicy', 'new'],
         badge: 'new',
@@ -312,7 +312,7 @@ export const seedMenuAndCombos = async (force = false) => {
         name: 'Italian Herbs & Chili Flakes Sachet Box',
         description: 'Pack of 5 authentic oregano seasonings and crushed red chili flakes.',
         category: 'dips',
-        image: 'https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?auto=format&fit=crop&w=600&q=80',
+        image: '/images/dips/herbs_chili_sachets.jpg',
         basePrice: 20,
         tags: ['vegetarian', 'vegan'],
         badge: null,
