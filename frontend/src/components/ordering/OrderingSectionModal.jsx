@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { READY_MADE_PIZZAS } from '../../data/readyMadePizzas';
 import { useCart } from '../../context/CartContext';
@@ -11,6 +11,29 @@ const OrderingSectionModal = ({ isOpen, onClose }) => {
   const [customizingPizza, setCustomizingPizza] = useState(null);
   const [isMakeYourOwnOpen, setIsMakeYourOwnOpen] = useState(false);
   const { addToCart } = useCart();
+
+  // Lock body scroll and handle Escape key when modal is open
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        // If child modal is open, let child handle it or close ordering modal
+        if (!customizingPizza && !isMakeYourOwnOpen) {
+          onClose();
+        }
+      }
+    };
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose, customizingPizza, isMakeYourOwnOpen]);
 
   if (!isOpen) return null;
 
