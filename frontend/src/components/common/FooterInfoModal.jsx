@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   X,
@@ -112,6 +112,26 @@ const PROMO_VOUCHERS = [
 
 const FooterInfoModal = ({ modalType, onClose }) => {
   const { showToast } = useCart();
+
+  // Lock body scroll and handle Escape key
+  useEffect(() => {
+    if (!modalType) return;
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [modalType, onClose]);
 
   // Balance enquiry state
   const [cardNumber, setCardNumber] = useState('');
