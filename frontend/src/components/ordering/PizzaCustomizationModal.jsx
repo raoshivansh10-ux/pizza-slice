@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../../context/CartContext';
 import { AVAILABLE_SIZES, ALL_EXTRA_TOPPINGS } from '../../data/readyMadePizzas';
@@ -30,6 +30,24 @@ const CHEESES_LIST = [
 
 const PizzaCustomizationModal = ({ pizza, onClose, isMakeYourOwn = false }) => {
   const { addToCart } = useCart();
+
+  // Lock body scroll and handle Escape key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [onClose]);
 
   // Selected state
   const [selectedSize, setSelectedSize] = useState(AVAILABLE_SIZES[1]); // Default Medium
