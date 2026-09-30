@@ -4940,6 +4940,7 @@ input, textarea, select {
   align-items: center;
   justify-content: center;
   padding: 24px;
+  overscroll-behavior: contain;
 }
 
 .ordering-modal-backdrop {
@@ -4961,6 +4962,7 @@ input, textarea, select {
   flex-direction: column;
   box-shadow: var(--shadow-lg);
   overflow: hidden;
+  overscroll-behavior: contain;
   z-index: 10;
 }
 
@@ -5060,6 +5062,7 @@ input, textarea, select {
 .ready-made-view, .make-your-own-view {
   padding: 28px 32px;
   overflow-y: auto;
+  overscroll-behavior: contain;
   flex: 1;
 }
 
@@ -5255,6 +5258,7 @@ input, textarea, select {
   align-items: center;
   justify-content: center;
   padding: 20px;
+  overscroll-behavior: contain;
 }
 
 .customize-modal-backdrop {
@@ -5275,6 +5279,7 @@ input, textarea, select {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  overscroll-behavior: contain;
   box-shadow: var(--shadow-lg);
   z-index: 10;
 }
@@ -5326,11 +5331,13 @@ input, textarea, select {
   grid-template-columns: 1.35fr 1fr;
   flex: 1;
   overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .customize-controls-col {
   padding: 24px 28px;
   overflow-y: auto;
+  overscroll-behavior: contain;
   border-right: 1px solid var(--border-subtle);
   display: flex;
   flex-direction: column;
@@ -10006,6 +10013,7 @@ html {
   align-items: center;
   justify-content: center;
   padding: 20px;
+  overscroll-behavior: contain;
 }
 
 .footer-modal-dialog {
@@ -10019,6 +10027,7 @@ html {
   flex-direction: column;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 30px rgba(0, 125, 198, 0.2);
   overflow: hidden;
+  overscroll-behavior: contain;
 }
 
 .footer-modal-header {
@@ -10080,6 +10089,7 @@ html {
 .footer-modal-body {
   padding: 24px;
   overflow-y: auto;
+  overscroll-behavior: contain;
   color: var(--text-main);
   font-size: 14px;
   line-height: 1.6;
